@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 size_t atoi_f(const char* arg) {
     size_t num = 0;
@@ -11,23 +12,6 @@ size_t atoi_f(const char* arg) {
         i++;
     }
     return num;
-}
-
-unsigned long pow2(int n) {
-    unsigned int res = 1;
-    while (n != 0) {
-        res *= 2;
-        n--;
-    }
-    return res - 1;
-}
-
-int pow_f(int n, int d) {
-    int res = 1;
-    for (int i = 0; i < d; i++) {
-        res *= n;
-    }
-    return res;
 }
 
 int strcmp_f(const char* str1, const char* str2) {
@@ -42,7 +26,8 @@ int strcmp_f(const char* str1, const char* str2) {
 }
 
 int strtol_f(const char* str) {
-    for (int i = 0; i < strlen(str); i++) {
+    size_t len = strlen(str);
+    for (int i = 0; i < len; i++) {
         if ((str[i] >= '0' && str[i] <= '9')) {
             continue;
         } else {
@@ -62,7 +47,6 @@ enum errors {
 
 enum errors check_int(int len, char* argv[]) {
     char correct_flags[][12] = { "-h", "-p", "-s", "-e", "-a", "-f", "/h", "/p", "/s", "/e", "/a", "/f" };
-    unsigned long limit = pow2(32);
     if (len > 3) {
         return error_empty_or_incorrect_input;
     } else {
@@ -88,71 +72,81 @@ enum errors check_int(int len, char* argv[]) {
 
 int* h_func(size_t num) {
     int* arr = malloc(sizeof(int) * 100);
+    if (arr == NULL){
+       return NULL;
+    }
+    else{
     int l = 0;
-    if (num <= 100) {
-        for (size_t i = num; i <= 100; i = i + num) {
-            if (i % num == 0) {
-                arr[l] = i;
-                l++;
-            } else {
-                continue;
-            }
-        }
+      if (num <= 100) {
+          for (size_t i = num; i <= 100; i = i + num) {
+              if (i % num == 0) {
+                  arr[l] = i;
+                  l++;
+              } else {
+                  continue;
+              }
+          }
+      }
+      else{
+          return arr;
+      }
     }
     return arr;
 }
 
-int p_func(size_t num) {
-    for (size_t i = 2; i * i < num; i++) {
-        if (num % i == 0) {
-            return 1;
-        } else {
-            return 0;
+bool p_func(size_t num) {
+    if (num <= 1) {
+        return false;
+    }
+    bool *sieve = (bool *)malloc((num + 1) * sizeof(bool));
+    if (sieve == NULL) {
+        fprintf(stderr, "Memory allocation failed in p_func.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (size_t i = 0; i <= num; ++i) {
+        sieve[i] = true;
+    }
+    for (size_t p = 2; p * p <= num; ++p) {
+        if (sieve[p]) {
+            for (size_t i = p * p; i <= num; i += p) {
+                sieve[i] = false;
+            }
         }
     }
-}
-
-char* s_func(size_t num) {
-    int len = 0;
-    size_t trash = num;
-    while (trash > 0) {
-        trash /= 10;
-        len++;
-    }
-    char* arr = malloc(sizeof(char) * len);
-    char* rev_arr = malloc(sizeof(char) * len);
-    int i = 0, j = 0;
-    while (num > 0) {
-        arr[i] = (num % 10) + '0';
-        num /= 10;
-        i++;
-    }
-    i--;
-    while (i != -1) {
-        rev_arr[j] = arr[i];
-        i--;
-        j++;
-    }
-    free(arr);
-    return rev_arr;
+    bool result = sieve[num];
+    free(sieve);
+    return result;
 }
 
 char** e_func(size_t num) {
     char** arr_str = malloc(sizeof(char*) * 10 * num);
-    int result;
-    for (int i = 0; i < (num * 10); i++) {
-        arr_str[i] = malloc(sizeof(char) * 25);
+    if (arr_str == NULL) {
+        return NULL;
     }
+    char temp_str[25];
     int cnt = 0;
+    int result;
     for (int base_num = 1; base_num <= 10; base_num++) {
+        result = 1;
         for (int degree = 1; degree <= num; degree++) {
-            result = pow_f(base_num, degree);
-            sprintf(arr_str[cnt], "Base %d: %d^%d=%d", base_num, base_num, degree, result);
+            result *=base_num;
+            snprintf(temp_str, sizeof(temp_str), "Base %d: %d^%d=%d", base_num, base_num, degree, result);
+            arr_str[cnt] = malloc(sizeof(char) * (strlen(temp_str) + 1));
+            if (arr_str[cnt] == NULL) {
+                for (int i = 0; i < cnt; i++) {
+                    free(arr_str[i]);
+                }
+                free(arr_str);
+                return NULL;
+            }
+            strcpy(arr_str[cnt], temp_str);
             cnt++;
         }
     }
     return arr_str;
 }
+
 
 size_t a_func(size_t num) {
     size_t res = (num * (num + 1)) / 2;
@@ -184,54 +178,63 @@ int main(int argc, char* argv[]) {
                 if (strcmp_f(argv[1], correct_flags[i]) == 0) {
 
                     if (correct_flags[i][1] == 'h') {
-                        int* natural = h_func(atoi_f(argv[2]));
-                        if (natural[0] == 0) {
+                       int* natural = h_func(atoi_f(argv[2]));
+                       if (natural == NULL) {
+                          printf("Memory allocation failed in h_func.\n");
+                       } 
+                       else if (natural[0] == 0) {
                             printf("num > 100\n");
-                        } else {
+                       }
+                       else {
                             printf("The numbers are multiples: ");
                             int cnt_n = 0;
                             while (natural[cnt_n] != 0) {
-                                printf("%d ", natural[cnt_n]);
-                                cnt_n++;
+                                  printf("%d ", natural[cnt_n]);
+                                  cnt_n++;
                             }
                             printf("\n");
-                        }
-                        free(natural);
-                        break;
-                    }
+                       }
+                       free(natural);
+                       break;
+                   } 
 
                     else if (correct_flags[i][1] == 'p') {
-                        if (p_func(atoi_f(argv[2]))) {
+                        if(p_func(atoi_f(argv[2]))){
                             printf("The entered number is simple.\n");
-                        } else {
+                        }
+                        else {
                             printf("The entered number is composite.\n");
                         }
                         break;
                     }
 
                     else if (correct_flags[i][1] == 's') {
-                        char* digits = s_func(atoi_f(argv[2]));
-                        size_t num = atoi_f(argv[2]);
+                        char* digits = argv[2];
+                        size_t len = strlen(argv[2]);
                         int cnt_s = 0;
-                        while (num > 0) {
-                            num /= 10;
+                        while (cnt_s != len) {
                             printf("%c ", digits[cnt_s]);
                             cnt_s++;
                         }
                         printf("\n");
-                        free(digits);
                         break;
                     }
 
                     else if (correct_flags[i][1] == 'e') {
                         if (atoi_f(argv[2]) <= 10) {
                             char** base_str = e_func(atoi_f(argv[2]));
-                            for (int i = 0; i < (10 * atoi_f(argv[2])); i++) {
-                                printf("%s\n", base_str[i]);
-                                free(base_str[i]);
+                            if (base_str == NULL){
+                               printf("Memory allocation failed in e_func.\n");
                             }
-                            free(base_str);
-                        } else {
+                            else{
+                               for (int i = 0; i < (10 * atoi_f(argv[2])); i++) {
+                                   printf("%s\n", base_str[i]);
+                                   free(base_str[i]);
+                               }
+                               free(base_str);
+                            }
+                        } 
+                        else {
                             printf("To use this flag, the number must be no more than 10.\n");
                         }
                         break;
@@ -260,4 +263,3 @@ int main(int argc, char* argv[]) {
             break;
     }
 }
-
