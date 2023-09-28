@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
             printf("The flag enter incorrectly.\n");
             break;
         case error_invalid_number_type:
-            printf("The number type is not 'long'.\n");
+            printf("The number type is wrong.\n");
             break;
         case error_empty_or_incorrect_input:
             printf("Input is empty or incorrect.\n");
