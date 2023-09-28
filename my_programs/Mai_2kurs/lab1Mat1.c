@@ -14,6 +14,14 @@ size_t atoi_f(const char* arg) {
     return num;
 }
 
+int pow_f(int n, int d) {
+    int res = 1;
+    for (int i = 0; i < d; i++) {
+        res *= n;
+    }
+    return res;
+}
+
 int strcmp_f(const char* str1, const char* str2) {
     while (*str1) {
         if (*str1 != *str2) {
@@ -168,7 +176,7 @@ int main(int argc, char* argv[]) {
             printf("The flag enter incorrectly.\n");
             break;
         case error_invalid_number_type:
-            printf("The number type is not 'long'.\n");
+            printf("The number type is wrong.\n");
             break;
         case error_empty_or_incorrect_input:
             printf("Input is empty or incorrect.\n");
