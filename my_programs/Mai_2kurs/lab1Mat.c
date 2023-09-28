@@ -13,15 +13,6 @@ size_t atoi_f(const char* arg) {
     return num;
 }
 
-unsigned long pow2(int n) {
-    unsigned int res = 1;
-    while (n != 0) {
-        res *= 2;
-        n--;
-    }
-    return res - 1;
-}
-
 int pow_f(int n, int d) {
     int res = 1;
     for (int i = 0; i < d; i++) {
@@ -62,7 +53,6 @@ enum errors {
 
 enum errors check_int(int len, char* argv[]) {
     char correct_flags[][12] = { "-h", "-p", "-s", "-e", "-a", "-f", "/h", "/p", "/s", "/e", "/a", "/f" };
-    unsigned long limit = pow2(32);
     if (len > 3) {
         return error_empty_or_incorrect_input;
     } else {
