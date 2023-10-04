@@ -23,7 +23,7 @@ enum errors {
     input_correct
 };
 
-enum errors check(int len, char* argv[],int* n_in_flag) {
+enum errors check(int len, char* argv[]) {
     char correct_flags[][4] = { "-a", "/a", "-r", "/r" };
     if (len < 2){
        return error_empty_or_incorrect_input;
