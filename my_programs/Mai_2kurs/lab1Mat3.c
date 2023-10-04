@@ -48,12 +48,14 @@ enum errors {
     error_incorrect_flag,
     error_invalid_number_type,
     error_empty_or_incorrect_input,
-    error_over_unsigned_long,
     input_correct
 };
 
 enum errors check(int len, char* argv[]) {
     char correct_flags[][6] = { "-q", "-m", "-t", "/q", "/m", "/t" };
+    if (len < 2){
+       return error_empty_or_incorrect_input;
+    }
     for (int i = 0; i < 6; i++) {
         if (argv[1][1] == 'q') {
            if (len != 6){
