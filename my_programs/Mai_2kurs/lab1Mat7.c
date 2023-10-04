@@ -200,8 +200,7 @@ void a_func(FILE* file1, FILE* output_file){
 
 int main(int argc, char* argv[]) {
     char correct_flags[][4] = { "-a", "/a", "-r", "/r" };
-    int n_in_flag;
-    switch (check(argc, argv,&n_in_flag)) {
+    switch (check(argc, argv) {
         case error_incorrect_flag:
             printf("The entered flag is incorrect\n");
             break;
