@@ -95,22 +95,38 @@ void find_notation(FILE* input, FILE* output){
           }
           buffer[buffer_index] = '\0';
           
-          fprintf(output, " ");
-          if (max_c >= '0' && max_c <= '9') {
-              base = max_c - '0' + 1;
-          } 
-          else if (tollower(max_c) >= 'a' && tollower(max_c) <= 'z') {
-              base = tollower(max_c) - 'a' + 11;
+          int valid = 1;
+          for (int i = 0; i < buffer_size; i++) {
+              if ((buffer[i] < '0' || (buffer[i] > '9' && buffer[i] < 'A') || (buffer[i] > 'Z' && buffer[i] < 'a') || buffer[i] > 'z')) {
+                  valid = 0;
+                  break;
+              }
           }
-          else{
-              base = 0;
+
+          if (!valid) {
+             fprintf(output, " The entered number is incorrect\n");
           }
-          if (base <= 0 || base > 36){
-             fprintf(output, "The entered number turned out to be incorrect\n");
-          }
-          else{   
-             int result = all_to_ten(buffer,base);
-             fprintf(output, "%d %d\n", base,result);
+          else {
+              fprintf(output, " ");
+              if (max_c >= '0' && max_c <= '9') {
+                  base = max_c - '0' + 1;
+              }
+              else if (max_c >= 'A' && max_c <= 'Z') {
+                  base = max_c - 'A' + 11;
+              }
+              else if (max_c >= 'a' && max_c <= 'z') {
+                  base = max_c - 'a' + 11;
+              }
+              else {
+                  base = 0;
+              }
+              if (base <= 0 || base > 36) {
+                  fprintf(output, "The entered number turned out to be incorrect\n");
+              }
+              else {
+                  int result = all_to_ten(buffer, base);
+                  fprintf(output, "%d %d\n", base, result);
+              }
           }
           max_c = 0;
           free(buffer);
@@ -123,7 +139,7 @@ void find_notation(FILE* input, FILE* output){
     if (buffer != NULL){
        free(buffer);
     }
-}   
+}
 
 int main(int argc, char* argv[]) {
     switch (check(argc, argv)) {

@@ -31,7 +31,7 @@ enum errors check(int len, char* argv[]) {
     else{
        for (int i = 0; i < 4; i++){
           if (strcmp_f(argv[1], correct_flags[i]) == 0){
-             if (len == 5){
+             if (len == 5 && i > 1){
                 FILE *file1 = fopen(argv[2],"r");
                 FILE *file2 = fopen(argv[3],"r");
                 FILE *output_file = fopen(argv[4],"r");
@@ -200,7 +200,7 @@ void a_func(FILE* file1, FILE* output_file){
 
 int main(int argc, char* argv[]) {
     char correct_flags[][4] = { "-a", "/a", "-r", "/r" };
-    switch (check(argc, argv) {
+    switch (check(argc, argv)) {
         case error_incorrect_flag:
             printf("The entered flag is incorrect\n");
             break;
