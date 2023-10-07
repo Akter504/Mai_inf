@@ -48,13 +48,20 @@ int char_to_int(char elem){
     }
 }
 
-size_t all_to_ten(char *buffer, int base){
-   size_t len = strlen(buffer);
-   size_t res = 0;
-   for (size_t i = 0; i < len; i++){
-       res = res*base + char_to_int(buffer[i]);
-   }
-   return res;
+int all_to_ten(char *buffer, int base) {
+    size_t len = strlen(buffer);
+    int res = 0;
+    int sign = 1;
+    if (buffer[0] == '-') {
+        sign = -1;
+        buffer++; 
+        len--;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        res = res * base + char_to_int(buffer[i]);
+    }
+    return sign * res;
 }
 
 void find_notation(FILE* input, FILE* output){
@@ -102,8 +109,8 @@ void find_notation(FILE* input, FILE* output){
              fprintf(output, "The entered number turned out to be incorrect\n");
           }
           else{   
-             size_t result = all_to_ten(buffer,base);
-             fprintf(output, "%d %ld\n", base,result);
+             int result = all_to_ten(buffer,base);
+             fprintf(output, "%d %d\n", base,result);
           }
           max_c = 0;
           free(buffer);
